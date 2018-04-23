@@ -7,4 +7,4 @@ To try:
 * Clone
 * npm install
 * npm link
-* yo api
+* yo cytel-api
