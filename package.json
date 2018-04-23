@@ -1,0 +1,26 @@
+{
+  "name": "generator-api",
+  "version": "0.0.0",
+  "description": "Yeoman api` generator",
+  "license": "MIT",
+  "main": "app/index.js",
+  "repository": "nabarun-demo/generator-api",
+  "author": {
+    "name": "NS",
+    "email": "nsaha123@gmail.com",
+    "url": "https://github.com/nabarun-demo"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "files": ["generators"],
+  "keywords": ["yeoman-generator"],
+  "dependencies": {
+    "yeoman-generator": "^0.19.0",
+    "chalk": "^1.0.0",
+    "yosay": "^1.0.2"
+  },
+  "devDependencies": {
+    "mocha": "*"
+  }
+}
