@@ -12,7 +12,7 @@ class Routes {
   configRoutes(): void {
     this.apiRouter.get('/', (req, res) => {
       res.json({
-        message: 'Welcome to our library API!'
+        message: 'Welcome to demo API!'
       });
     });
 

@@ -90,6 +90,12 @@ module.exports = yeoman.generators.Base.extend({
 
       // Dist/
       this.fs.copy(this.templatePath("_dist"), this.destinationPath("dist"));
+
+      // Test
+      this.fs.copy(
+        this.templatePath("_test/_test.js"),
+        this.destinationPath("test/test.js")
+      );
     }
   },
   install: function() {

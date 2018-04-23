@@ -1,25 +1,28 @@
-import { Request, Response, NextFunction } from 'express';
-import { Book } from '../models/book';
-import axios from 'axios';
-import { validate } from 'class-validator';
-import { resolve } from 'path';
+import { Request, Response, NextFunction } from "express";
+import { Book } from "../models/book";
+import axios from "axios";
+import { validate } from "class-validator";
+import { resolve } from "path";
 
 class bookController {
   constructor() {}
 
   getAllBooks(req: Request, res: Response, next: NextFunction) {
-    axios
-      .get('http://localhost:5000/book')
-      .then(function(response) {
-        // console.log(response);
-        res
-          .status(200)
-          .json({ message: 'Get all books!', books: response.data });
-      })
-      .catch(function(error) {
-        // console.log(`From remote server: ${error}`);
-        res.status(500).json({ message: 'Error while getting books' });
-      });
+    // Add code to call the persitence layer
+    res.status(200).json({ message: "Get all books!", books: [] });
+
+    // axios
+    //   .get('http://localhost:5000/book')
+    //   .then(function(response) {
+    //     // console.log(response);
+    //     res
+    //       .status(200)
+    //       .json({ message: 'Get all books!', books: response.data });
+    //   })
+    //   .catch(function(error) {
+    //     // console.log(`From remote server: ${error}`);
+    //     res.status(500).json({ message: 'Error while getting books' });
+    //   });
   }
 
   addBook(req: Request, res: Response, next: NextFunction) {
@@ -33,20 +36,23 @@ class bookController {
     // console.log(book);
     validate(book, { validationError: { target: false } }).then(errors => {
       if (errors.length > 0) {
-        res.status(500).json({ message: 'Validation error', errors: errors });
+        res.status(500).json({ message: "Validation error", errors: errors });
       } else {
-        axios
-          .post('http://localhost:5000/book', book)
-          .then(function(response) {
-            // console.log(response);
-            res
-              .status(201)
-              .json({ message: 'Book added!', book: response.data });
-          })
-          .catch(function(error) {
-            // console.log(`From remote server: ${error}`);
-            res.status(500).json({ message: 'Error while adding book' });
-          });
+        // Add call to persistence layer api
+        res.status(201).json({ message: "Book added!", book: book });
+
+        // axios
+        //   .post("http://localhost:5000/book", book)
+        //   .then(function(response) {
+        //     // console.log(response);
+        //     res
+        //       .status(201)
+        //       .json({ message: "Book added!", book: response.data });
+        //   })
+        //   .catch(function(error) {
+        //     // console.log(`From remote server: ${error}`);
+        //     res.status(500).json({ message: "Error while adding book" });
+        //   });
       }
     });
   }

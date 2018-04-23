@@ -13,8 +13,12 @@
   "scripts": {
     "test": "mocha"
   },
-  "files": ["generators"],
-  "keywords": ["yeoman-generator"],
+  "files": [
+    "generators"
+  ],
+  "keywords": [
+    "yeoman-generator"
+  ],
   "dependencies": {
     "yeoman-generator": "^0.19.0",
     "chalk": "^1.0.0",
