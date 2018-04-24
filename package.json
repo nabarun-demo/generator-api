@@ -11,10 +11,15 @@
     "url": "https://github.com/nabarun-demo"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --exit"
   },
-  "files": ["generators"],
-  "keywords": ["yeoman-generator"],
+  "files": [
+    "generators"
+  ],
+  "keywords": [
+    "yeoman-generator",
+    "cytel-api-generator"
+  ],
   "dependencies": {
     "yeoman-generator": "^0.19.0",
     "chalk": "^1.0.0",

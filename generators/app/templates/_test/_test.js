@@ -18,9 +18,7 @@ describe("Library API", function() {
         res.should.have.status(200);
         res.body.should.be.a("object");
         res.body.should.have.property("message");
-        res.body.should.have
-          .property("message")
-          .equal("Welcome to our library API!");
+        res.body.should.have.property("message").equal("Welcome to demo API!");
         done();
       });
   });
