@@ -12,7 +12,8 @@ To try:
 * yo cytel-api
 
 -- For NPM users
-[![NPM Version][npm-image]][https://www.npmjs.com/package/generator-cytel-api]
+
+[![NPM Version][npm-image]][npm-url]
 
 ## Install
 
@@ -34,3 +35,10 @@ yo cytel-api
 ## License
 
 [MIT](http://vjpr.mit-license.org)
+
+[npm-image]: https://img.shields.io/npm/v/live-xxx.svg
+[npm-url]: https://www.npmjs.com/package/generator-cytel-api
+[travis-image]: https://img.shields.io/travis/live-js/live-xxx/master.svg
+[travis-url]: https://travis-ci.org/live-js/live-xxx
+[coveralls-image]: https://img.shields.io/coveralls/live-js/live-xxx/master.svg
+[coveralls-url]: https://coveralls.io/r/live-js/live-xxx?branch=master
