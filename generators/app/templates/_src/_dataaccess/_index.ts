@@ -2,8 +2,8 @@ import mongoose = require("mongoose");
 import User from "./schemas/user";
 import IU from "./schemas/IUser";
 
-const mongoDBURI =
-  "mongodb://admin:admin123@cluster0-shard-00-00-ltme4.mongodb.net:27017,cluster0-shard-00-01-ltme4.mongodb.net:27017,cluster0-shard-00-02-ltme4.mongodb.net:27017/books?authSource=admin&replicaSet=Cluster0-shard-0&ssl=true";
+const mongoDBURI = "<%= dbcon %>";
+// "mongodb://admin:admin123@cluster0-shard-00-00-ltme4.mongodb.net:27017,cluster0-shard-00-01-ltme4.mongodb.net:27017,cluster0-shard-00-02-ltme4.mongodb.net:27017/books?authSource=admin&replicaSet=Cluster0-shard-0&ssl=true";
 
 class DataAccess {
   constructor() {

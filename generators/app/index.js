@@ -2,12 +2,9 @@
 var yeoman = require("yeoman-generator");
 var chalk = require("chalk");
 var yosay = require("yosay");
-var inquirer = require("inquirer");
 
-module.exports = yeoman.generators.Base.extend({
-  //Configurations will be loaded here.
-  //Ask for user input
-  prompting: function() {
+module.exports = class extends yeoman {
+  prompting() {
     var questions = [
       {
         type: "list",
@@ -30,7 +27,8 @@ module.exports = yeoman.generators.Base.extend({
         message: "Please enter your database connection string",
         when: function(answers) {
           return answers.project_type !== "Simple API";
-        }
+        },
+        default: "mongodb://localhost:27017/user"
       },
       {
         type: "input",
@@ -39,31 +37,34 @@ module.exports = yeoman.generators.Base.extend({
         default: this.appname
       }
     ];
-    var done = this.async();
-    inquirer.prompt(questions).then(answers => {
+    return this.prompt(questions).then(answers => {
       console.log(JSON.stringify(answers, null, "  "));
       this.props = answers;
-      done();
     });
-  },
-  //Writing Logic here
-  writing: {
-    //Copy the configuration files
-    config: function() {
-      let tempPath = "_package.json";
+  }
+
+  writing() {
+    config: {
+      this.fs.copyTpl(
+        this.templatePath("_package.json"),
+        this.destinationPath("package.json"),
+        {
+          appname: this.props.name
+        }
+      );
+
       if (
         this.props.project_type !== "Simple API" &&
         this.props.db_type === "MongoDB"
       ) {
-        tempPath = "_package_db.json";
+        const pkgJson = {
+          devDependencies: { "@types/mongoose": "^5.0.7" },
+          dependencies: { mongoose: "^5.0.12" }
+        };
+
+        // Extend or create package.json file in destination path
+        this.fs.extendJSON(this.destinationPath("package.json"), pkgJson);
       }
-      this.fs.copyTpl(
-        this.templatePath(tempPath),
-        this.destinationPath("package.json"),
-        {
-          name: this.props.name
-        }
-      );
 
       this.fs.copyTpl(
         this.templatePath("_tsconfig.json"),
@@ -72,10 +73,10 @@ module.exports = yeoman.generators.Base.extend({
           name: this.props.name
         }
       );
-    },
+    }
 
-    //Copy application files
-    app: function() {
+    // Copy application files
+    app: {
       // Entry point
       this.fs.copyTpl(
         this.templatePath("_bin/_www"),
@@ -137,9 +138,12 @@ module.exports = yeoman.generators.Base.extend({
         this.props.project_type !== "Simple API" &&
         this.props.db_type === "MongoDB"
       ) {
-        this.fs.copy(
+        this.fs.copyTpl(
           this.templatePath("_src/_dataaccess/_index.ts"),
-          this.destinationPath("src/dataaccess/index.ts")
+          this.destinationPath("src/dataaccess/index.ts"),
+          {
+            dbcon: this.props.db_con
+          }
         );
         this.fs.copy(
           this.templatePath("_src/_dataaccess/_schemas/_IUser.ts"),
@@ -152,7 +156,7 @@ module.exports = yeoman.generators.Base.extend({
       }
 
       // Dist
-      this.fs.copy(this.templatePath("_dist"), this.destinationPath("dist"));
+      // this.fs.copy(this.templatePath("_dist"), this.destinationPath("dist"));
 
       // Test
       this.fs.copy(
@@ -160,8 +164,9 @@ module.exports = yeoman.generators.Base.extend({
         this.destinationPath("test/test.js")
       );
     }
-  },
-  install: function() {
-    this.installDependencies();
   }
-});
+
+  install() {
+    // this.npmInstall();
+  }
+};
