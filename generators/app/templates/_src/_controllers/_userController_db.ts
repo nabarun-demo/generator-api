@@ -1,0 +1,49 @@
+import { Request, Response, NextFunction } from "express";
+import { UserModel } from "../models/user";
+import DA from "../dataaccess";
+import { validate } from "class-validator";
+
+class userController {
+  constructor() {}
+  async getAllUsers(req: Request, res: Response, next: NextFunction) {
+    await DA.getAllUsers()
+      .then(data => {
+        let u = data.map(doc => new UserModel(doc));
+        res.status(200).json({ message: "Get all users!", users: u });
+      })
+      .catch(err => {
+        // console.log(`From DB server: ${err}`);
+        res.status(500).json({
+          message: "Error while getting users"
+        });
+      });
+  }
+
+  async addUser(req: Request, res: Response, next: NextFunction) {
+    let user = new UserModel();
+    user.username = req.body.username;
+    user.email = req.body.email;
+    user.age = parseInt(req.body.age);
+    validate(user, { validationError: { target: false } }).then(errors => {
+      if (errors.length > 0) {
+        res.status(500).json({
+          message: "Validation error",
+          errors: errors
+        });
+      } else {
+        let user = req.body;
+        DA.addUser(user)
+          .then(data => {
+            let u = new UserModel(data);
+            res.status(200).json({ message: "success", user: u });
+          })
+          .catch(err => {
+            // console.log(`From DB server: ${err}`);
+            res.status(500).json({ message: "Error while adding user" });
+          });
+      }
+    });
+  }
+}
+
+export default new userController();

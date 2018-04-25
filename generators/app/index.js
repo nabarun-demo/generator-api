@@ -2,33 +2,63 @@
 var yeoman = require("yeoman-generator");
 var chalk = require("chalk");
 var yosay = require("yosay");
+var inquirer = require("inquirer");
 
 module.exports = yeoman.generators.Base.extend({
   //Configurations will be loaded here.
   //Ask for user input
   prompting: function() {
-    var done = this.async();
-    this.prompt(
+    var questions = [
+      {
+        type: "list",
+        name: "project_type",
+        message: "Please select your project type",
+        choices: ["Simple API", "API with DB", "API with DB & UI"]
+      },
+      {
+        type: "list",
+        name: "db_type",
+        message: "Please select your database",
+        choices: ["MongoDB", "DynamoDB", "PostgreSQL"],
+        when: function(answers) {
+          return answers.project_type !== "Simple API";
+        }
+      },
+      {
+        type: "input",
+        name: "db_con",
+        message: "Please enter your database connection string",
+        when: function(answers) {
+          return answers.project_type !== "Simple API";
+        }
+      },
       {
         type: "input",
         name: "name",
         message: "Your project name",
-        //Defaults to the project's folder name if the input is skipped
         default: this.appname
-      },
-      function(answers) {
-        this.props = answers;
-        this.log(answers.name);
-        done();
-      }.bind(this)
-    );
+      }
+    ];
+    var done = this.async();
+    inquirer.prompt(questions).then(answers => {
+      console.log(JSON.stringify(answers, null, "  "));
+      this.props = answers;
+      done();
+    });
   },
   //Writing Logic here
   writing: {
     //Copy the configuration files
     config: function() {
+      let tempPath = "_package.json";
+      if (
+        this.props.project_type !== "Simple API" &&
+        this.props.db_type === "MongoDB"
+      ) {
+        tempPath = "_package_db.json";
+      }
       this.fs.copyTpl(
-        this.templatePath("_package.json"),
+        this.templatePath(tempPath),
         this.destinationPath("package.json"),
         {
           name: this.props.name
@@ -71,9 +101,16 @@ module.exports = yeoman.generators.Base.extend({
       );
 
       // Model
+      let tempPath = "_src/_models/_user.ts";
+      if (
+        this.props.project_type !== "Simple API" &&
+        this.props.db_type === "MongoDB"
+      ) {
+        tempPath = "_src/_models/_user_db.ts";
+      }
       this.fs.copy(
-        this.templatePath("_src/_models/_book.ts"),
-        this.destinationPath("src/models/book.ts")
+        this.templatePath(tempPath),
+        this.destinationPath("src/models/user.ts")
       );
 
       // Route
@@ -83,12 +120,38 @@ module.exports = yeoman.generators.Base.extend({
       );
 
       // Controllers
+      tempPath = "_src/_controllers/_userController.ts";
+      if (
+        this.props.project_type !== "Simple API" &&
+        this.props.db_type === "MongoDB"
+      ) {
+        tempPath = "_src/_controllers/_userController_db.ts";
+      }
       this.fs.copy(
-        this.templatePath("_src/_controllers/_bookController.ts"),
-        this.destinationPath("src/controllers/bookController.ts")
+        this.templatePath(tempPath),
+        this.destinationPath("src/controllers/userController.ts")
       );
 
-      // Dist/
+      // DataAccess
+      if (
+        this.props.project_type !== "Simple API" &&
+        this.props.db_type === "MongoDB"
+      ) {
+        this.fs.copy(
+          this.templatePath("_src/_dataaccess/_index.ts"),
+          this.destinationPath("src/dataaccess/index.ts")
+        );
+        this.fs.copy(
+          this.templatePath("_src/_dataaccess/_schemas/_IUser.ts"),
+          this.destinationPath("src/dataaccess/schemas/IUser.ts")
+        );
+        this.fs.copy(
+          this.templatePath("_src/_dataaccess/_schemas/_user.ts"),
+          this.destinationPath("src/dataaccess/schemas/user.ts")
+        );
+      }
+
+      // Dist
       this.fs.copy(this.templatePath("_dist"), this.destinationPath("dist"));
 
       // Test

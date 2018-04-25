@@ -1,5 +1,5 @@
-import * as express from 'express';
-import ba from '../controllers/bookController';
+import * as express from "express";
+import ba from "../controllers/userController";
 
 class Routes {
   public apiRouter: express.Router;
@@ -10,15 +10,15 @@ class Routes {
   }
 
   configRoutes(): void {
-    this.apiRouter.get('/', (req, res) => {
+    this.apiRouter.get("/", (req, res) => {
       res.json({
-        message: 'Welcome to demo API!'
+        message: "Welcome to cytel demo API!"
       });
     });
 
-    this.apiRouter.get('/book', ba.getAllBooks);
+    this.apiRouter.get("/user", ba.getAllUsers);
 
-    this.apiRouter.post('/book', ba.addBook);
+    this.apiRouter.post("/user", ba.addUser);
   }
 }
 
