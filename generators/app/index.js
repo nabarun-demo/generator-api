@@ -167,6 +167,6 @@ module.exports = class extends yeoman {
   }
 
   install() {
-    // this.npmInstall();
+    this.npmInstall();
   }
 };
