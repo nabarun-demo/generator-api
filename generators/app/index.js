@@ -2,9 +2,11 @@
 var yeoman = require("yeoman-generator");
 var chalk = require("chalk");
 var yosay = require("yosay");
-var colors = require('colors');
 
 module.exports = class extends yeoman {
+  initializing() {
+    console.log(yosay(chalk.yellow.bold('Hello, and welcome to my') + chalk.red.bold(' fantastic generator full of') + chalk.green.bold(' whimsy and bubble gum!')));
+  }
   prompting() {
     var questions = [
       {
@@ -20,6 +22,12 @@ module.exports = class extends yeoman {
         choices: ["MongoDB", "DynamoDB", "PostgreSQL"],
         when: function (answers) {
           return answers.project_type !== "Simple API";
+        },
+        validate: function (answer) {
+          if (answer === "DynamoDB" || answer === "PostgreSQL") {
+            return 'Selected options are yet to be implemented. Please try again with other options';
+          }
+          return true;
         }
       },
       {
@@ -35,17 +43,23 @@ module.exports = class extends yeoman {
         type: "input",
         name: "name",
         message: "Your project name",
-        default: this.appname
+        default: this.appname.replace(' ', '-'),
+        validate: function (answer) {
+          if (answer.includes(' ')) {
+            return 'Project name cannot have spaces';
+          }
+          return true;
+        }
       }
     ];
     return this.prompt(questions).then(answers => {
-      this.log(`Your inputs: \n${JSON.stringify(answers, null, "  ").yellow}`);
+      this.log(`Your inputs: \n${chalk.yellow(JSON.stringify(answers, null, "  "))}`);
       if (answers.project_type === "API with DB & UI" || answers.db_type === "DynamoDB" || answers.db_type === "PostgreSQL") {
-        this.env.error(colors.red.bold(`Selected options are yet to be implemented. Please try again with other options`));
+        this.env.error(chalk.red.bold(`Selected options are yet to be implemented. Please try again with other options`));
       }
       this.props = answers;
     }).catch(err => {
-      this.log(colors.red.bold(err));
+      this.log(chalk.red.bold(err));
     });
   }
 
@@ -70,7 +84,7 @@ module.exports = class extends yeoman {
           name: this.props.name
         });
       } catch (error) {
-        this.log(colors.red.bold(error));
+        this.log(chalk.red.bold(error));
       }
     }
 
@@ -124,9 +138,9 @@ module.exports = class extends yeoman {
   }
 
   install() {
-    this.log('Installing project dependencies through npm'.bold.cyan);
+    this.log(chalk.cyan.bold('Installing project dependencies through npm'));
     this.npmInstall().then(() => {
-      this.log(colors.green.bold(`It's ready to use now \nUse npm start to start the project....`))
+      this.log(chalk.green.bold(`It's ready to use now \nUse npm start to start the project....`))
     });
   }
 };

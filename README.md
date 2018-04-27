@@ -1,6 +1,6 @@
 # Yeoman `cytel-api` generator
 
-This is a Yeoman custom generator demo. This is customized for generating RESTful api folder structure specific to typescript language. This is customized for Cytel Inc.
+This is a Yeoman custom generator demo. This is customized for generating RESTful api folder structure specific to typescript language.
 
 ## Install
 
@@ -17,7 +17,7 @@ To try:
 
 [![NPM Version][npm-image]][npm-url]
 
-First, install Yeoman and generator-cygen using npm (we assume you have pre-installed node.js).
+First, install Yeoman and generator-cygen using npm (we assume you have pre-installed node.js & typescript).
 
 ```bash
 npm install -g yo
