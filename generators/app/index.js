@@ -39,30 +39,39 @@ module.exports = class extends yeoman {
       }
     ];
     return this.prompt(questions).then(answers => {
-      console.log(`Your inputs: \n${JSON.stringify(answers, null, "  ").yellow}`);
+      this.log(`Your inputs: \n${JSON.stringify(answers, null, "  ").yellow}`);
+      if (answers.project_type === "API with DB & UI" || answers.db_type === "DynamoDB" || answers.db_type === "PostgreSQL") {
+        this.env.error(colors.red.bold(`Selected options are yet to be implemented. Please try again with other options`));
+      }
       this.props = answers;
+    }).catch(err => {
+      this.log(colors.red.bold(err));
     });
   }
 
   writing() {
     config: {
-      this.fs.copyTpl(this.templatePath("_package.json"), this.destinationPath("package.json"), {
-        appname: this.props.name
-      });
+      try {
+        this.fs.copyTpl(this.templatePath("_package.json"), this.destinationPath("package.json"), {
+          appname: this.props.name
+        });
 
-      if (this.props.project_type !== "Simple API" && this.props.db_type === "MongoDB") {
-        const pkgJson = {
-          devDependencies: { "@types/mongoose": "^5.0.7" },
-          dependencies: { mongoose: "^5.0.12" }
-        };
+        if (this.props.project_type !== "Simple API" && this.props.db_type === "MongoDB") {
+          const pkgJson = {
+            devDependencies: { "@types/mongoose": "^5.0.7" },
+            dependencies: { mongoose: "^5.0.12" }
+          };
 
-        // Extend or create package.json file in destination path
-        this.fs.extendJSON(this.destinationPath("package.json"), pkgJson);
+          // Extend or create package.json file in destination path
+          this.fs.extendJSON(this.destinationPath("package.json"), pkgJson);
+        }
+
+        this.fs.copyTpl(this.templatePath("_tsconfig.json"), this.destinationPath("tsconfig.json"), {
+          name: this.props.name
+        });
+      } catch (error) {
+        this.log(colors.red.bold(error));
       }
-
-      this.fs.copyTpl(this.templatePath("_tsconfig.json"), this.destinationPath("tsconfig.json"), {
-        name: this.props.name
-      });
     }
 
     // Copy application files
@@ -115,9 +124,9 @@ module.exports = class extends yeoman {
   }
 
   install() {
-    console.log('Installing project dependencies through npm'.bold.cyan);
+    this.log('Installing project dependencies through npm'.bold.cyan);
     this.npmInstall().then(() => {
-      console.log(colors.green.bold(`It's ready to use now \nUse npm start to start the project....`))
+      this.log(colors.green.bold(`It's ready to use now \nUse npm start to start the project....`))
     });
   }
 };
