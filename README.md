@@ -32,6 +32,12 @@ Then generate your new project:
 yo cytel-api
 ```
 
+Then run the project:
+
+```bash
+npm start
+```
+
 ## License
 
 [MIT](http://vjpr.mit-license.org)
