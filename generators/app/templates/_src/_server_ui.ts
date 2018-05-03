@@ -2,6 +2,7 @@ import * as express from 'express';
 import * as logger from 'morgan';
 import * as createError from 'http-errors';
 import route from './routes/route';
+import * as path from "path";
 
 export class Server {
   public app: express.Application;
@@ -18,9 +19,13 @@ export class Server {
   }
 
   private configServer() {
+    this.app.set('views', path.join(__dirname, 'views'));
+    this.app.set('view engine', 'pug');
     this.app.use(logger('dev'));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
+    this.app.use(express.static(path.join(__dirname, 'public')));
+    this.app.use("/bootstrap", express.static(path.resolve("./node_modules/bootstrap/dist/css")));
 
     // catch 404 and forward to error handler
     this.app.use(function (err, req, res, next) {

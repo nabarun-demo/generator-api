@@ -13,9 +13,7 @@ class Routes {
 
   configRoutes(): void {
     this.apiRouter.get("/", (req, res) => {
-      res.json({
-        message: "Welcome to cytel demo API!"
-      });
+      res.render('index', { title: 'Express' });
     });
 
     this.userRouter.get("/", ba.getAllUsers).post("/", ba.addUser);

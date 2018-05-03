@@ -22,12 +22,6 @@ module.exports = class extends yeoman {
         choices: ["MongoDB", "DynamoDB", "PostgreSQL"],
         when: function (answers) {
           return answers.project_type !== "Simple API";
-        },
-        validate: function (answer) {
-          if (answer === "DynamoDB" || answer === "PostgreSQL") {
-            return 'Selected options are yet to be implemented. Please try again with other options';
-          }
-          return true;
         }
       },
       {
@@ -54,7 +48,7 @@ module.exports = class extends yeoman {
     ];
     return this.prompt(questions).then(answers => {
       this.log(`Your inputs: \n${chalk.yellow(JSON.stringify(answers, null, "  "))}`);
-      if (answers.project_type === "API with DB & UI" || answers.db_type === "DynamoDB" || answers.db_type === "PostgreSQL") {
+      if (answers.db_type === "DynamoDB" || answers.db_type === "PostgreSQL") {
         this.env.error(chalk.red.bold(`Selected options are yet to be implemented. Please try again with other options`));
       }
       this.props = answers;
@@ -70,14 +64,26 @@ module.exports = class extends yeoman {
           appname: this.props.name
         });
 
-        if (this.props.project_type !== "Simple API" && this.props.db_type === "MongoDB") {
+        if (this.props.db_type === "MongoDB") {
           const pkgJson = {
             devDependencies: { "@types/mongoose": "^5.0.7" },
-            dependencies: { mongoose: "^5.0.12" }
+            dependencies: { "mongoose": "^5.0.12" }
           };
 
           // Extend or create package.json file in destination path
           this.fs.extendJSON(this.destinationPath("package.json"), pkgJson);
+        }
+
+        if (this.props.project_type === "API with DB & UI") {
+          const pkgJson = {
+            devDependencies: { "gulp": "^3.9.1" },
+            dependencies: { "pug": "^2.0.3", "bootstrap": "^4.1.1" },
+            scripts: { "start": "npm run build & gulp & npm run start-dev" }
+          };
+
+          // Extend or create package.json file in destination path
+          this.fs.extendJSON(this.destinationPath("package.json"), pkgJson);
+          this.fs.copy(this.templatePath("_gulpfile.js"), this.destinationPath("gulpfile.js"));
         }
 
         this.fs.copyTpl(this.templatePath("_tsconfig.json"), this.destinationPath("tsconfig.json"), {
@@ -101,22 +107,33 @@ module.exports = class extends yeoman {
       });
 
       // Server.ts
-      this.fs.copy(this.templatePath("_src/_server.ts"), this.destinationPath("src/server.ts"));
+      let tempPath = "_src/_server.ts";
+      if (this.props.project_type === "API with DB & UI") {
+        tempPath = "_src/_server_ui.ts";
+      }
+      this.fs.copy(this.templatePath(tempPath), this.destinationPath("src/server.ts"));
 
       // Model
-      let tempPath = "_src/_models/_user.ts";
+      tempPath = "_src/_models/_user.ts";
       if (this.props.project_type !== "Simple API" && this.props.db_type === "MongoDB") {
         tempPath = "_src/_models/_user_db.ts";
       }
       this.fs.copy(this.templatePath(tempPath), this.destinationPath("src/models/user.ts"));
 
       // Route
-      this.fs.copy(this.templatePath("_src/_routes/_route.ts"), this.destinationPath("src/routes/route.ts"));
+      tempPath = "_src/_routes/_route.ts";
+      if (this.props.project_type === "API with DB & UI") {
+        tempPath = "_src/_routes/_route_ui.ts";
+      }
+      this.fs.copy(this.templatePath(tempPath), this.destinationPath("src/routes/route.ts"));
 
       // Controllers
       tempPath = "_src/_controllers/_userController.ts";
-      if (this.props.project_type !== "Simple API" && this.props.db_type === "MongoDB") {
+      if (this.props.project_type === "API with DB" && this.props.db_type === "MongoDB") {
         tempPath = "_src/_controllers/_userController_db.ts";
+      }
+      else if (this.props.project_type === "API with DB & UI") {
+        tempPath = "_src/_controllers/_userController_ui.ts";
       }
       this.fs.copy(this.templatePath(tempPath), this.destinationPath("src/controllers/userController.ts"));
 
@@ -129,8 +146,12 @@ module.exports = class extends yeoman {
         this.fs.copy(this.templatePath("_src/_dataaccess/_schemas/_user.ts"), this.destinationPath("src/dataaccess/schemas/user.ts"));
       }
 
-      // Dist
-      // this.fs.copy(this.templatePath("_dist"), this.destinationPath("dist"));
+      // public, veiews
+      if (this.props.project_type === "API with DB & UI") {
+        this.fs.copy(this.templatePath("_src/_public"), this.destinationPath("src/public"));
+        this.fs.copy(this.templatePath("_src/_views"), this.destinationPath("src/views"));
+
+      }
 
       // Test
       this.fs.copy(this.templatePath("_test/_test.js"), this.destinationPath("test/test.js"));
@@ -139,8 +160,9 @@ module.exports = class extends yeoman {
 
   install() {
     this.log(chalk.cyan.bold('Installing project dependencies through npm'));
+    this.npmInstall(['gulp-cli'], { 'global': true });
     this.npmInstall().then(() => {
-      this.log(chalk.green.bold(`It's ready to use now \nUse npm start to start the project....`))
+      this.log(chalk.green.bold(`It's ready to use now \nUse 'npm start' to run the project....`))
     });
   }
 };

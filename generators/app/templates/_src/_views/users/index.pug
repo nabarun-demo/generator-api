@@ -1,0 +1,10 @@
+extends ../layout
+
+block content
+    h1= title    
+    br
+    ul
+        each u in users
+            li
+                h3= u.username
+                h4= u.email                
