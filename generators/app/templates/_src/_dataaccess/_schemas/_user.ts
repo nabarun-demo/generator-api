@@ -1,8 +1,8 @@
 import { Schema, Model, model } from "mongoose";
 import IU from "./IUser";
 
-//book schema definition
-let userSchema: Schema = new Schema({
+// book schema definition
+const userSchema: Schema = new Schema({
   username: { type: String, required: true },
   email: { type: String, required: true },
   age: { type: Number, required: true, min: 1 },

@@ -3,12 +3,12 @@ import { UserModel } from "../models/user";
 import DA from "../dataaccess";
 import { validate } from "class-validator";
 
-class userController {
-  constructor() {}
-  async getAllUsers(req: Request, res: Response, next: NextFunction) {
+class UserController {
+  constructor() { }
+  public async getAllUsers(req: Request, res: Response, next: NextFunction) {
     await DA.getAllUsers()
       .then(data => {
-        let u = data.map(doc => new UserModel(doc));
+        const u = data.map(doc => new UserModel(doc));
         res.status(200).json({ message: "Get all users!", users: u });
       })
       .catch(err => {
@@ -19,22 +19,21 @@ class userController {
       });
   }
 
-  async addUser(req: Request, res: Response, next: NextFunction) {
-    let user = new UserModel();
+  public async addUser(req: Request, res: Response, next: NextFunction) {
+    const user = new UserModel();
     user.username = req.body.username;
     user.email = req.body.email;
-    user.age = parseInt(req.body.age);
+    user.age = parseInt(req.body.age, 10);
     validate(user, { validationError: { target: false } }).then(errors => {
       if (errors.length > 0) {
         res.status(500).json({
           message: "Validation error",
-          errors: errors
+          errors
         });
       } else {
-        let user = req.body;
         DA.addUser(user)
           .then(data => {
-            let u = new UserModel(data);
+            const u = new UserModel(data);
             res.status(200).json({ message: "success", user: u });
           })
           .catch(err => {
@@ -46,4 +45,4 @@ class userController {
   }
 }
 
-export default new userController();
+export default new UserController();

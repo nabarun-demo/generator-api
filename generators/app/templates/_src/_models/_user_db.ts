@@ -18,14 +18,14 @@ export class UserModel {
     each: true,
     message: "$property is too long. Maximal length is $value characters"
   })
-  username: string;
+  public username: string;
   @IsNotEmpty({ message: "$property is required" })
   @IsEmail({}, { message: "Please enter valid $property" })
-  email: string;
+  public email: string;
   @IsInt({ message: "$property must be numeric" })
   @IsNotEmpty({ message: "$property is required" })
   @IsPositive()
-  age: number;
+  public age: number;
 
   constructor(user?: IU) {
     this.username = (user && user.username) || "";

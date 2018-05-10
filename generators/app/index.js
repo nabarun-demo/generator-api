@@ -37,10 +37,12 @@ module.exports = class extends yeoman {
         type: "input",
         name: "name",
         message: "Your project name",
-        default: this.appname.replace(' ', '-'),
+        default: this.appname.replace(' ', '-').toLowerCase(),
         validate: function (answer) {
           if (answer.includes(' ')) {
             return 'Project name cannot have spaces';
+          } else if (answer.replace(/[^A-Z]/g, "").length > 0) {
+            return 'Project name cannot have upper case';
           }
           return true;
         }
@@ -87,6 +89,9 @@ module.exports = class extends yeoman {
         }
 
         this.fs.copyTpl(this.templatePath("_tsconfig.json"), this.destinationPath("tsconfig.json"), {
+          name: this.props.name
+        });
+        this.fs.copyTpl(this.templatePath("_tslint.json"), this.destinationPath("tslint.json"), {
           name: this.props.name
         });
       } catch (error) {

@@ -11,7 +11,7 @@ class Routes {
     this.configRoutes();
   }
 
-  configRoutes(): void {
+  public configRoutes(): void {
     this.apiRouter.get("/", (req, res) => {
       res.json({
         message: "Welcome to cytel demo API!"
