@@ -40,7 +40,7 @@ export class Server {
     });
   }
 
-  public static getServer(): Server {
+  public static bootstrap(): Server {
     return new Server();
   }
 }

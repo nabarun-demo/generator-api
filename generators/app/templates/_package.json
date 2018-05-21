@@ -16,7 +16,6 @@
     "test": "nyc --reporter=html mocha --exit"
   },
   "dependencies": {
-    "axios": "^0.18.0",
     "class-validator": "^0.8.5",
     "debug": "~2.6.9",
     "express": "~4.16.0",

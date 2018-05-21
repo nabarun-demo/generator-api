@@ -5,7 +5,7 @@ var yosay = require("yosay");
 
 module.exports = class extends yeoman {
   initializing() {
-    console.log(yosay(chalk.yellow.bold('Hello, and welcome to my') + chalk.red.bold(' fantastic generator full of') + chalk.green.bold(' whimsy and bubble gum!')));
+    console.log(yosay(chalk.yellow.bold('Hello, and welcome to cytel') + chalk.red.bold(' code generator full of') + chalk.green.bold(' exciting stuffs!')));
   }
   prompting() {
     var questions = [
@@ -131,6 +131,9 @@ module.exports = class extends yeoman {
         tempPath = "_src/_routes/_route_ui.ts";
       }
       this.fs.copy(this.templatePath(tempPath), this.destinationPath("src/routes/route.ts"));
+
+      // Utils
+      this.fs.copy(this.templatePath("_src/_utils/_debuglogger.ts"), this.destinationPath("src/utils/debuglogger.ts"));
 
       // Controllers
       tempPath = "_src/_controllers/_userController.ts";
