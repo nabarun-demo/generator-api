@@ -17,7 +17,7 @@ To try:
 
 [![NPM Version][npm-image]][npm-url]
 
-First, install Yeoman and generator-cygen using npm (we assume you have pre-installed node.js & typescript).
+First, install Yeoman and generator-cygen using npm (we assume you have pre-installed node.js, nodemon & typescript).
 
 ```bash
 npm install -g yo
